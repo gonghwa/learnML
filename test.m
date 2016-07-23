@@ -47,7 +47,35 @@ Y_category = Y_category';
 
 days_of_sample = size(daily_price,1);
 rand_seq = randperm(days_of_sample)';
-X=X_norm(1:rand_seq(round(days_of_sample*0.7),:)
-X_test=X_norm(rand_seq(round(days_of_sample*0.7)+1:end,:)
+X=X_norm(rand_seq(1:round(days_of_sample*0.7)),:);
+Y=Y_category(rand_seq(1:round(days_of_sample*0.7)),:);
+X_test=X_norm(rand_seq(round(days_of_sample*0.7)+1:end),:);
+Y_test=Y_category(rand_seq(round(days_of_sample*0.7)+1:end),:);
 
-%model = svmtrain(Y_category , X_norm , '-c 10 -g 0.1');
+
+%find best C, gamma
+error = 100;
+C_opt = 0;
+gamma_opt = 0;
+a = logspace(-3,5,8);
+
+for i =1:8
+	for j = 1:8
+		C = a(i);
+		gamma = a(j);
+    arg = cstrcat ("-q -c ",num2str(C),"-g",num2str(gamma));		
+    model = svmtrain(Y , X , arg);
+    [predicted_label, accuracy, decision_values] = svmpredict(Y_test,X_test,model);
+ 		%fprintf('now C, gamma, accuracy is %d %d %d\n',C, gamma,accuracy(1,1));
+		if error > 100-accuracy(1,1)
+			error = 100-accuracy(1,1);
+			C_opt = C;
+			gamma_opt = gamma;
+			
+		end
+	end
+end	
+C=C_opt;
+gamma = gamma_opt;
+
+fprintf('best parrameter is:%d %d %d \n', C, gamma,100-error);
