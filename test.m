@@ -31,8 +31,9 @@ end
 
 % build 3 categories by devide 
 onethird = floor(size(daily_cum,1)/3);
-cate1 = sort(daily_cum(:,end))(onethird*2+1,:);
-cate2 = sort(daily_cum(:,end))(onethird+1,:);
+%cate1 = sort(daily_cum(:,end))(onethird*2+1,:);
+%cate2 = sort(daily_cum(:,end))(onethird+1,:);
+cate1 = 0.03;cate2 = -0.03;
 Y_category(find(daily_cum(:,end)>cate1)) = 1; % categorize to -3%-, -3~3, 3%+
 Y_category(find(daily_cum(:,end)<=cate1)) = 2;
 Y_category(find(daily_cum(:,end)<=cate2)) = 3;
@@ -57,15 +58,16 @@ Y_test=Y_category(rand_seq(round(days_of_sample*0.7)+1:end),:);
 error = 100;
 C_opt = 0;
 gamma_opt = 0;
-a = logspace(-3,5,8);
+a = logspace(2,5,10);
+b = logspace(-1,1,8);
 
-for i =1:8
-	for j = 1:8
+for i =1:10
+	for j = 1:5
 		C = a(i);
-		gamma = a(j);
-    arg = cstrcat ("-q -c ",num2str(C),"-g",num2str(gamma));		
+		gamma = b(j);
+    arg = cstrcat ("-q -w1 0.1 -w3 0.1 -c ",num2str(C),"-g",num2str(gamma));		
     model = svmtrain(Y , X , arg);
-    [predicted_label, accuracy, decision_values] = svmpredict(Y_test,X_test,model);
+    [predicted_label, accuracy, decision_values] = svmpredict(Y_test,X_test,model,'-q');
  		%fprintf('now C, gamma, accuracy is %d %d %d\n',C, gamma,accuracy(1,1));
 		if error > 100-accuracy(1,1)
 			error = 100-accuracy(1,1);
@@ -79,3 +81,6 @@ C=C_opt;
 gamma = gamma_opt;
 
 fprintf('best parrameter is:%d %d %d \n', C, gamma,100-error);
+result=find(predicted_label==1);
+[predicted_label,Y_test];
+mean(predicted_label (result)==Y_test (result))
