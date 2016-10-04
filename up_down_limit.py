@@ -11,9 +11,15 @@ import datetime as dt
 #from matplotlib import pyplot as plt
 import tushare as ts
 
-universe= set_universe('SH180')
+ts.set_token('e0bfed9150b8a4d1a6ad21f73319071c7dc41ae352b8f6173c2b28434407f16a')
+idx=ts.Idx()
 
-df=pd.DataFrame(data=0,index=universe,columns=['velocity'])
+sh380=idx.IdxCons(ticker='000009')
+
+
+
+
+df=pd.DataFrame(data=0,index=sh380.iloc[:,6],columns=['velocity'])
 df['gain']=0
 df['25pct']=0
 df['75pct']=0
@@ -29,7 +35,7 @@ mkt=ts.Market()
 for a in range(len(df)):
 
     # sec1=hist.sort_values('closePrice').reset_index(drop=True)
-    sec1=mkt.MktEqudAdjGet(beginDate=begin_date,endDate=today,secID = universe[a],pandas="1")
+    sec1=mkt.MktEqudAdj(beginDate=begin_date.strftime('%Y%m%d'),endDate=today.strftime('%Y%m%d'),secID = universe[a])
     sec1=sec1.sort_values('closePrice').reset_index(drop=True)
     if len(sec1)<55:
         continue
@@ -86,5 +92,3 @@ df.sort_values('gain').tail(10)
 
 
 # n,bins, patches =plt.hist(hist.closePrice,10)
-
-
