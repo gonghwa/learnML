@@ -14,30 +14,30 @@ import tushare as ts
 ts.set_token('e0bfed9150b8a4d1a6ad21f73319071c7dc41ae352b8f6173c2b28434407f16a')
 idx=ts.Idx()
 
-sh380=idx.IdxCons(ticker='000009')
+sh380=idx.IdxCons(ticker='000009').iloc[:,5:7]
 
 
 
 
-df=pd.DataFrame(data=0,index=sh380.iloc[:,6],columns=['velocity'])
+df=pd.DataFrame(data=0,index=sh380.iloc[:,0],columns=['velocity'])
 df['gain']=0
 df['25pct']=0
 df['75pct']=0
 df['secShortName']=''
 
-
+delta=30
 today=dt.date.today()
-begin_date=today -dt.timedelta(30)
+begin_date=today -dt.timedelta(delta)
 # hist = DataAPI.MktFunddGet(beginDate=begin_date,endDate=today,ticker = '510300',pandas="1")
 # hist = DataAPI.MktEqudAdjGet(beginDate=begin_date,endDate=today,secID = universe,pandas="1") #field=[u'closePrice',u'secID',u'tradeDate'],
 mkt=ts.Market()
 
-for a in range(len(df)):
+for a in sh380.iloc[:,1]:
 
     # sec1=hist.sort_values('closePrice').reset_index(drop=True)
-    sec1=mkt.MktEqudAdj(beginDate=begin_date.strftime('%Y%m%d'),endDate=today.strftime('%Y%m%d'),secID = universe[a])
+    sec1=mkt.MktEqud(beginDate=begin_date.strftime('%Y%m%d'),endDate=today.strftime('%Y%m%d'),ticker = str(a))
     sec1=sec1.sort_values('closePrice').reset_index(drop=True)
-    if len(sec1)<55:
+    if len(sec1)<delta/2:
         continue
     sec_25pct=sec1.loc[len(sec1)/4,'closePrice']
     sec_50pct=sec1.loc[len(sec1)/2,'closePrice']
