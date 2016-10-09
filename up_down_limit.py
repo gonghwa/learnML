@@ -25,18 +25,21 @@ df['25pct']=0
 df['75pct']=0
 df['secShortName']=''
 
-delta=30
+delta=60
 today=dt.date.today()
 begin_date=today -dt.timedelta(delta)
 # hist = DataAPI.MktFunddGet(beginDate=begin_date,endDate=today,ticker = '510300',pandas="1")
 # hist = DataAPI.MktEqudAdjGet(beginDate=begin_date,endDate=today,secID = universe,pandas="1") #field=[u'closePrice',u'secID',u'tradeDate'],
 mkt=ts.Market()
 
-for a in sh380.iloc[:,1]:
+for a in range(len(sh380)):
 
     # sec1=hist.sort_values('closePrice').reset_index(drop=True)
-    sec1=mkt.MktEqud(beginDate=begin_date.strftime('%Y%m%d'),endDate=today.strftime('%Y%m%d'),ticker = str(a))
+    
+    sec1=mkt.MktEqud(beginDate=begin_date.strftime('%Y%m%d'),endDate=today.strftime('%Y%m%d'),ticker = str(sh380.iloc[a,1]))
     sec1=sec1.sort_values('closePrice').reset_index(drop=True)
+       
+    
     if len(sec1)<delta/2:
         continue
     sec_25pct=sec1.loc[len(sec1)/4,'closePrice']
