@@ -18,7 +18,7 @@ def ReadPost(url):
         details1.append(0)
     else:
         details1.append(re.search(r'\d+',str(details[-1:])).group())
-    details1[1]=int(details1[1])
+    details1[1]=int(re.search('\d+',details1[1]).group())
     details1[2]=re.match('\w+',details1[2]).group()
     details1[5]=re.match('\w+',details1[5]).group()
     df=pd.DataFrame(data=None, columns=['tid','年份', '制造商', '车辆型号', '车牌号码', '公里数', '变速箱','排气量','价格','内容','最后编辑'])
