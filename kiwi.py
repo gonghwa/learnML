@@ -27,12 +27,12 @@ def ReadPost(url):
     # no price update
     if len(response.xpath('//i[@class="pstatus"]'))==0:
         # recent post or not
-        if re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()|//em[contains(@id,"authorposton")]/span/@title')[0]) is None is None:
+        if re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()|//em[contains(@id,"authorposton")]/span/@title')[0]) is None:
             details1.append(re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()|//em[contains(@id,"authorposton")]/span/@title')[1]).group())
         else:
             details1.append(re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()')[0]).group())
     else:
-        details1.append(re.search('\d+-\d+-\d+',response.xpath('//i[@class="pstatus"]').group()))
+        details1.append(re.search('\d+-\d+-\d+',response.xpath('//i[@class="pstatus"]/text()')[0]).group())
 
     df1=pd.DataFrame(details1).T
     df1.columns=df.columns
