@@ -24,7 +24,9 @@ def ReadPost(url):
     postid=response.xpath('//td[@class="t_f"]/@id')[0]
     details1.append(' '.join(x.strip() for x in response.xpath('//td[@id="'+postid+'"]//text()')))
     # get last edit date
+    # no price update
     if len(response.xpath('//i[@class="pstatus"]'))==0:
+        # recent post or not
         if re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()|//em[contains(@id,"authorposton")]/span/@title')[0]) is None is None:
             details1.append(re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()|//em[contains(@id,"authorposton")]/span/@title')[1]).group())
         else:
@@ -58,7 +60,7 @@ UrlList=[]
 for page in pages:
     res=requests.get(page)
     response=etree.HTML(res.text)
-    UrlList=UrlList+response.xpath('//table/tbody[contains(@id,"normalthread")]/tr/th/a/@href')
+    UrlList=UrlList+response.xpath('//table/tbody[contains(@id,"normalthread")]/tr/th/a[1]/@href')
 UrlList=list(map(lambda x:urljoin(res.url,x),UrlList))
 
 
