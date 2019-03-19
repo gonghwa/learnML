@@ -2,10 +2,11 @@ import pandas as pd
 import re
 from lxml.html import urljoin
 from lxml import etree
+import requests
 
 initialURL=['http://bbs.skykiwi.com/forum.php?mod=forumdisplay&fid=18&filter=typeid&typeid=472','http://bbs.skykiwi.com/forum.php?mod=forumdisplay&fid=18&filter=typeid&typeid=473','http://bbs.skykiwi.com/forum.php?mod=forumdisplay&fid=18&filter=typeid&typeid=474']
 
-fetch(initialURL[1])
+
 def ReadPost(url):
     res=requests.get(url)
     response=etree.HTML(res.text)
@@ -37,8 +38,8 @@ urljoin(res.url,UrlList[0])
 
 
 # all posts
-UrlList=response.xpath('//table/tbody[contains(@id,"normalthread")]/tr/th/a/@href').extract()
-url=response.urljoin(UrlList[0])
+UrlList=response.xpath('//table/tbody[contains(@id,"normalthread")]/tr/th/a/@href')
+url=urljoin(res.url,UrlList[0])
 
 
 
