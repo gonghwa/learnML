@@ -24,7 +24,13 @@ def ReadPost(url):
     postid=response.xpath('//td[@class="t_f"]/@id')[0]
     details1.append(' '.join(x.strip() for x in response.xpath('//td[@id="'+postid+'"]//text()')))
     # get last edit date
-    details1.append(re('\d+-\d+-\d+',response.xpath('//i[@class="pstatus"]').group()[0]))
+    if len(response.xpath('//i[@class="pstatus"]'))==0:
+        if re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()|//em[contains(@id,"authorposton")]/span/@title')[0]) is None is None:
+            details1.append(re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()|//em[contains(@id,"authorposton")]/span/@title')[1]).group())
+        else:
+            details1.append(re.search('\d+-\d+-\d+',response.xpath('//em[contains(@id,"authorposton")]/text()')[0]).group())
+    else:
+        details1.append(re.search('\d+-\d+-\d+',response.xpath('//i[@class="pstatus"]').group()))
 
     df1=pd.DataFrame(details1).T
     df1.columns=df.columns
@@ -32,17 +38,27 @@ def ReadPost(url):
     return df
 
 
+
+
 res=requests.get(initialURL[1])
 response=etree.HTML(res.text)
-urljoin(res.url,UrlList[0])
 
-
-# all posts
-UrlList=response.xpath('//table/tbody[contains(@id,"normalthread")]/tr/th/a/@href')
-url=urljoin(res.url,UrlList[0])
 
 
 
 # all pages
 pages=response.xpath('//div[@class="pg"]/a[count(@class)=0]/@href')
 pages=pages[:int(len(pages)/2)]
+pages=list(map(lambda x:urljoin(res.url,x),pages))
+pages.insert(0,res.url)
+
+
+# all posts
+UrlList=[]
+for page in pages:
+    res=requests.get(page)
+    response=etree.HTML(res.text)
+    UrlList=UrlList+response.xpath('//table/tbody[contains(@id,"normalthread")]/tr/th/a/@href')
+UrlList=list(map(lambda x:urljoin(res.url,x),UrlList))
+
+
