@@ -14,7 +14,10 @@ def ReadPost(url):
 
     details1=details[1:14:2]
     details1.insert(0,re.search(r'tid=\d+',res.url).group()[4:])
-    details1.append(re.search(r'\d+',str(details[-1:])).group())
+    if re.search(r'\d+',str(details[-1:])) is None:
+        details1.append(0)
+    else:
+        details1.append(re.search(r'\d+',str(details[-1:])).group())
     details1[1]=int(details1[1])
     details1[2]=re.match('\w+',details1[2]).group()
     details1[5]=re.match('\w+',details1[5]).group()
