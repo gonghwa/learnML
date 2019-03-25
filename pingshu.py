@@ -1,5 +1,4 @@
 def DownPingshu(StartNo,EndNo):
-    from selenium import webdriver
     import requests
     from urllib.parse import unquote,urlsplit,urljoin
     from lxml import etree
